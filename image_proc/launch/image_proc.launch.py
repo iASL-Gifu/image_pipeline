@@ -41,9 +41,9 @@ from launch_ros.descriptions import ComposableNode
 
 
 def generate_launch_description():
-    image_topic_arg = LaunchArg('image_topic', default_value='/image_raw',
+    image_topic_arg = DeclareLaunchArgument('image_topic', default_value='/image_raw',
                                 description='input image topic')
-    camera_info_arg = LaunchArg('camera_topic', default_value='/camera_info',
+    camera_info_arg = DeclareLaunchArgument('camera_topic', default_value='/camera_info',
                                 description='input camera info topic')                       
     composable_nodes = [
         ComposableNode(
@@ -51,8 +51,8 @@ def generate_launch_description():
             plugin='image_proc::DebayerNode',
             name='debayer_node',
             remappings=[
-                ('/image_raw', [LaunchConfig('image_topic')]),
-                ('/camera_info', [LaunchConfig('camera_topic')]),
+                ('/image_raw', [LaunchConfiguration('image_topic')]),
+                ('/camera_info', [LaunchConfiguration('camera_topic')]),
             ],
         ),
         ComposableNode(
@@ -62,7 +62,7 @@ def generate_launch_description():
             # Remap subscribers and publishers
             remappings=[
                 ('image', 'image_mono'),
-                ('/camera_info', [LaunchConfig('camera_topic')]),
+                ('/camera_info', [LaunchConfiguration('camera_topic')]),
                 ('image_rect', 'image_rect')
             ],
         ),
@@ -107,6 +107,8 @@ def generate_launch_description():
 
     return LaunchDescription([
         arg_container,
+        image_topic_arg,
+        camera_info_arg,
         image_processing_container,
         load_composable_nodes,
     ])
